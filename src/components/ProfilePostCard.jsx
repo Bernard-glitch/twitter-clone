@@ -1,41 +1,72 @@
-import { Button, Col } from "react-bootstrap";
-import IconButton from "../components/IconButton";
-import { useState } from "react";
-import NewPostModal from "./NewPostModal";
+import { Button, Col, Image, Row } from "react-bootstrap";
+import { useState, useContext, } from "react";
+import { useDispatch } from "react-redux";
+import { likePost, removeLikeFromPost } from "../features/posts/postsSlice";
+import { AuthContext } from "./AuthProvider";
 
-export default function ProfileSideBar({ handleLogout }) {
-    const [show, setShow] = useState(false);
+export default function ProfilePostCard({ post }) {
+    const { content, id: postId } = post;
+    const [likes, setLikes] = useState(post.likes || []);
+    const dispatch = useDispatch();
+    const { currentUser } = useContext(AuthContext);
+    const userId = currentUser.uid;
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const isLiked = likes.includes(userId);
+
+    const pic =
+        "https://pbs.twimg.com/profile_images/1587405892437221376/h167Jlb2_400x400.jpg"
+
+    const handleLike = () => (isLiked ? removeFromLikes() : addToLikes());
+
+    const addToLikes = () => {
+        setLikes([...likes, userId]);
+        dispatch(likePost({ userId, postId }));
+    };
+
+    const removeFromLikes = () => {
+        setLikes(likes.filter((id) => id !== userId));
+        dispatch(removeLikeFromPost({ userId, postId }))
+    };
 
     return (
-        <Col
-            sm={2}
-            className="d-flex flex-column justify-content-start align-items-start bg-light vh-100"
-            style={{ position: "sticky", top: 0 }}
+        <Row
+            className="p-3"
+            style={{
+                borderTop: "1px solid #D3D3D3",
+                borderBottom: "1px solid #D3D3D3",
+            }}
         >
-            <IconButton className="bi bi-twitter" isTop />
-            <IconButton className="bi bi-house" text="Home" />
-            <IconButton className="bi bi-search" text="Explore" />
-            <IconButton className="bi bi-bell" text="Notifications" />
-            <IconButton className="bi bi-envelope" text="Messages" />
-            <IconButton className="bi bi-journal-text" text="Lists" />
-            <IconButton className="bi bi-bookmark" text="Bookmarks" />
-            <IconButton className="bi bi-patch-check" text="Verified" />
-            <IconButton className="bi bi-person" text="Profile" />
-            <IconButton className="bi bi-filter-circle" text="More" />
-            <IconButton
-                className="bi bi-door-closed"
-                text="Logout"
-                onClick={handleLogout}
-            />
-            <Button className="rounded-pill w-100 mb-3" onClick={handleShow}>
-                Tweet
-            </Button>
-
-            <NewPostModal show={show} handleClose={handleClose} />
-        </Col>
+            <Col sm={1}>
+                <Image src={pic} fluid roundedCircle />
+            </Col>
+            <Col>
+                <strong>Haris</strong>
+                <span> @haris.samingnan · Apr 16</span>
+                <p>{content}</p>
+                <div className="d-flex justify-content-between">
+                    <Button variant="light">
+                        <i className="bi bi-chat"></i>
+                    </Button>
+                    <Button variant="light">
+                        <i className="bi bi-repeat"></i>
+                    </Button>
+                    <Button variant="light" onClick={handleLike}>
+                        {isLiked ? (
+                            <i className="bi bi-heart-fill text-danger"></i>
+                        ) : (
+                            <i className="bi bi-heart"></i>
+                        )}
+                        {likes.length}
+                    </Button>
+                    <Button variant="light">
+                        <i className="bi bi-graph-up"></i> 61
+                    </Button>
+                    <Button variant="light">
+                        <i className="bi bi-upload"></i>
+                    </Button>
+                </div>
+            </Col>
+        </Row>
     );
 }
 
