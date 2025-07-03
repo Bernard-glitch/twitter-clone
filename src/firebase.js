@@ -4,20 +4,21 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyB0-pf6Eo5dMuuVS0OVGLvADFp6xE-bNeE",
-    authDomain: "twitter-app-4f007.firebaseapp.com",
-    projectId: "twitter-app-4f007",
-    storageBucket: "twitter-app-4f007.firebasestorage.app",
-    messagingSenderId: "644317039761",
-    appId: "1:644317039761:web:09da8a6b04a6a20bfa8330",
-    measurementId: "G-G18EMDWR7V"
+    apiKey: import.meta.env.VITE_API_KEY,
+    authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_ID,
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const storage = getStorage(app)
